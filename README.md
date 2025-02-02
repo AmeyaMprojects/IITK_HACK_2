@@ -25,6 +25,9 @@ This project is a web application for training and predicting bot detection usin
     
     ```
     go to the backend folder
+    ```sh
+    cd IITK_HACK_2/backend
+    ```
 
 2. Install the required Python packages:
     ```sh
@@ -38,7 +41,7 @@ This project is a web application for training and predicting bot detection usin
 
 ### Frontend Setup
 
-1. Go to the root directory of the project:
+1. Go to the root directory of the project IN A NEW TERNIMAL:
 
 2. Install the required npm packages:
     ```sh
