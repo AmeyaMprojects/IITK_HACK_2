@@ -8,8 +8,6 @@ This project is a web application for training and predicting bot detection usin
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
 - [Errors](#errors)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Installation
 
@@ -23,9 +21,10 @@ This project is a web application for training and predicting bot detection usin
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/yourusername/bot-detection.git
-    cd bot-detection/backend
+    git clone https://github.com/AmeyaMprojects/IITK_HACK_2
+    
     ```
+    go to the backend folder
 
 2. Install the required Python packages:
     ```sh
@@ -40,9 +39,6 @@ This project is a web application for training and predicting bot detection usin
 ### Frontend Setup
 
 1. Go to the root directory of the project:
-    ```sh
-    cd ..
-    ```
 
 2. Install the required npm packages:
     ```sh
@@ -78,18 +74,3 @@ This project is a web application for training and predicting bot detection usin
 ## Errors
 
 - If facing any errors related to network or CORS, please check if the backend server is running.
-
-## Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes.
-4. Commit your changes (`git commit -m 'Add some feature'`).
-5. Push to the branch (`git push origin feature-branch`).
-6. Open a pull request.
-
-## License
-
-This project is licensed under the MIT License. See the LICENSE file for details.
