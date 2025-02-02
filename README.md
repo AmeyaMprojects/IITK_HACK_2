@@ -74,3 +74,7 @@ This project is a web application for training and predicting bot detection usin
 ## Errors
 
 - If facing any errors related to network or CORS, please check if the backend server is running.
+
+## Demo
+
+For a demonstration of the application, please watch the [demo video](https://drive.google.com/file/d/135WSNdyu9c8c-GlQcdFGNI4Ok_FwofpG/view?usp=sharing).
