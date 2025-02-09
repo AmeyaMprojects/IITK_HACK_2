@@ -98,7 +98,7 @@ const App = () => {
       <h1>Train and Predict Bot Detection</h1>
 
       {/* File upload input */}
-      <div classname="file-upload-container">
+      <div className="file-upload-container">
         <input
           type="file"
           id="file-upload"
