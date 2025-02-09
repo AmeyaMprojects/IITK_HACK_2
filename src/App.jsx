@@ -41,10 +41,10 @@ const App = () => {
     try {
       const response = await axios.post(`${backendURL}/train`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        timeout: 60000,
+        timeout: 180000,  // Increase timeout to 3 minutes
       });
   
-      console.log("Response:", response);  // Log full response
+      console.log("Response:", response);  
       if (response.data) {
         setResults(response.data.model_results);
         setRocAucPlot(response.data.roc_auc_plot);
@@ -58,6 +58,7 @@ const App = () => {
       setLoading(false);
     }
   };
+  
   
 
   const handleFormChange = (e) => {
@@ -84,7 +85,7 @@ const App = () => {
     try {
       const response = await axios.post(`${backendURL}/predict`, formattedData, {
         headers: { "Content-Type": "application/json" },
-        timeout: 60000, 
+        timeout: 180000,      
       });
       setResults({ ...results, prediction: response.data.prediction });
     } catch (err) {
