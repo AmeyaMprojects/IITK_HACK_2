@@ -1,79 +1,72 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+const backendURL = "https://iitk-hack-2.onrender.com";
+
 const App = () => {
-  const [file, setFile] = useState(null); // Store the uploaded file
-  const [results, setResults] = useState(null); // Store the training results
-  const [loading, setLoading] = useState(false); // Manage loading state
-  const [error, setError] = useState(null); // Store error messages
-  const [rocAucPlot, setRocAucPlot] = useState(null); // Store the ROC-AUC plot
+  const [file, setFile] = useState(null);
+  const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [rocAucPlot, setRocAucPlot] = useState(null);
   const [formData, setFormData] = useState({
     default_profile: "",
     default_profile_image: "",
     favourites_count: "",
     followers_count: "",
     friends_count: "",
-    screen_name: "",
     statuses_count: "",
     verified: "",
     geo_enabled: "",
     average_tweets_per_day: "",
     account_age_days: "",
-  }); // Form data state
+  });
 
-  // Handle file input change
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
+  const handleFileChange = (e) => setFile(e.target.files[0]);
 
-  // Handle file upload and model training
   const handleTrain = async () => {
     if (!file) {
       setError("Please upload a CSV file.");
       return;
     }
-
+  
     setLoading(true);
     setError(null);
     setResults(null);
-    setRocAucPlot(null); // Reset ROC plot when starting a new training
-
+    setRocAucPlot(null);
+  
     const formData = new FormData();
     formData.append("file", file);
-
+  
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:5000/train",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          timeout: 30000,
-        }
-      );
-
-      setResults(response.data.model_results);
-      setRocAucPlot(response.data.roc_auc_plot); // Set the ROC-AUC plot from response
+      const response = await axios.post(`${backendURL}/train`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        timeout: 60000,
+      });
+  
+      console.log("Response:", response);  // Log full response
+      if (response.data) {
+        setResults(response.data.model_results);
+        setRocAucPlot(response.data.roc_auc_plot);
+      } else {
+        setError("No data received from the server.");
+      }
     } catch (err) {
+      console.error("Error:", err);
       setError(err.response?.data?.error || "Unexpected error occurred.");
     } finally {
       setLoading(false);
     }
   };
+  
 
-  // Handle form data change
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
-  // Handle form submission for bot prediction
   const handleSubmitForm = async (e) => {
     e.preventDefault();
-
-    // Ensure the form data is converted to the right types
     const formattedData = {
       ...formData,
       default_profile: parseInt(formData.default_profile, 10),
@@ -89,18 +82,11 @@ const App = () => {
     };
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:5000/predict",
-        formattedData,
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      setResults({
-        ...results,
-        prediction: response.data.prediction,
+      const response = await axios.post(`${backendURL}/predict`, formattedData, {
+        headers: { "Content-Type": "application/json" },
+        timeout: 60000, 
       });
+      setResults({ ...results, prediction: response.data.prediction });
     } catch (err) {
       setError("Error during prediction. Please try again.");
     }

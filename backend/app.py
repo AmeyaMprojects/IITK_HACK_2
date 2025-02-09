@@ -20,8 +20,12 @@ import base64
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+from flask import Flask
+from flask_cors import CORS
+
 app = Flask(__name__)
-CORS(app)  # Allow frontend to access backend
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins
+
 
 # Global variables for the trained model and scaler
 model = None
@@ -62,11 +66,12 @@ def train_model(df):
 
     # Train models
     models = {
-        'Logistic Regression': LogisticRegression(max_iter=1000, random_state=42),
-        'Decision Tree': DecisionTreeClassifier(random_state=42),
-        'XGBoost': XGBClassifier(random_state=42),
-        'Random Forest': RandomForestClassifier(random_state=42)
-    }
+    'Logistic Regression': LogisticRegression(max_iter=500, random_state=42),
+    'Decision Tree': DecisionTreeClassifier(random_state=42),
+    'XGBoost': XGBClassifier(n_estimators=50, max_depth=3, random_state=42, use_label_encoder=False, verbosity=0),
+    'Random Forest': RandomForestClassifier(n_estimators=50, max_depth=5, n_jobs=1, random_state=42)  # Reduce trees and parallel jobs
+}
+
 
     model_results = {}
 
@@ -159,6 +164,7 @@ def train():
 
         # Train the models and get evaluation results
         model_results, plot_img = train_model(df)
+        
 
         # Return the model evaluation results and the plot image
         return jsonify({
