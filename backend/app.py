@@ -66,115 +66,54 @@ def train_model(df):
 
     # Train models
     models = {
-    'Logistic Regression': LogisticRegression(max_iter=500, random_state=42),
-    'Decision Tree': DecisionTreeClassifier(random_state=42),
-    'XGBoost': XGBClassifier(n_estimators=50, max_depth=3, random_state=42, use_label_encoder=False, verbosity=0),
-    'Random Forest': RandomForestClassifier(n_estimators=50, max_depth=5, n_jobs=1, random_state=42)  # Reduce trees and parallel jobs
-}
+        'Logistic Regression': LogisticRegression(max_iter=500, random_state=42),
+        'Decision Tree': DecisionTreeClassifier(random_state=42),
+        'XGBoost': XGBClassifier(n_estimators=50, max_depth=3, random_state=42, use_label_encoder=False, verbosity=0),
+        'Random Forest': RandomForestClassifier(n_estimators=50, max_depth=5, n_jobs=1, random_state=42)
+    }
 
+    model_results = []
 
-    model_results = {}
-
-    # Train and evaluate each model
     for name, model in models.items():
         logger.info(f"Training {name} model...")
         model.fit(X_train_scaled, y_train)
         y_pred = model.predict(X_test_scaled)
-        
-        # Calculate metrics
-        precision = precision_score(y_test, y_pred)
-        recall = recall_score(y_test, y_pred)
-        f1 = f1_score(y_test, y_pred)
-        auc_roc = roc_auc_score(y_test, model.predict_proba(X_test_scaled)[:, 1])
 
-        model_results[name] = {
-            'precision': precision,
-            'recall': recall,
-            'f1': f1,
-            'auc_roc': auc_roc
-        }
+        model_results.append({
+            "model": name,
+            "precision": precision_score(y_test, y_pred),
+            "recall": recall_score(y_test, y_pred),
+            "f1": f1_score(y_test, y_pred),
+            "auc_roc": roc_auc_score(y_test, model.predict_proba(X_test_scaled)[:, 1])
+        })
 
-   # Create a combined plot with all metrics
-    fig, ax = plt.subplots(figsize=(10, 6))
-    model_names = list(model_results.keys())
+    return model_results  # Returning structured data instead of an image
 
-    # Plotting the metrics
-    metrics = ['precision', 'recall', 'f1', 'auc_roc']
-    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728']  # Color palette
-    bar_width = 0.2  # Width of the bars
-    index = range(len(model_names))
-
-    for i, metric in enumerate(metrics):
-        ax.bar(
-            [x + bar_width * i for x in index],  # Offset each metric slightly for better visualization
-            [model_results[name][metric] for name in model_names],
-            bar_width,
-            label=metric.capitalize(),
-            color=colors[i]
-        )
-
-    ax.set_xlabel('Models')
-    ax.set_ylabel('Scores')
-    ax.set_title('Model Comparison: Precision, Recall, F1 Score, and AUC-ROC')
-    ax.set_xticks([x + bar_width * 1.5 for x in index])
-    ax.set_xticklabels(model_names)
-    ax.legend()
-
-    # Add grid lines for better visibility
-    ax.grid(True, linestyle='--', alpha=0.7)
-
-    # Adding numbers to the bars for better visibility
-    for i, metric in enumerate(metrics):
-        for j, model_name in enumerate(model_names):
-            ax.text(
-                j + bar_width * i,  # Positioning of text
-                model_results[model_name][metric] + 0.02,  # Slightly above the bar
-                f"{model_results[model_name][metric]:.2f}",  # Format number
-                ha='center', va='bottom', color='black', fontsize=10
-            )
-
-    # Adjust layout to avoid label overlap
-    plt.tight_layout()
-
-    # Save the plot to a BytesIO object and encode as base64
-    img = io.BytesIO()
-    plt.savefig(img, format='png')
-    img.seek(0)
-    img_base64 = base64.b64encode(img.getvalue()).decode('utf-8')
-    plt.close()
-
-    return model_results, img_base64
 
 @app.route('/train', methods=['POST'])
 def train():
     logger.info("Received request to train the model.")
     if 'file' not in request.files:
-        logger.error("No file uploaded.")
         return jsonify({'error': 'No file uploaded'}), 400
 
     file = request.files['file']
     if file.filename == '':
-        logger.error("No file selected.")
         return jsonify({'error': 'No file selected'}), 400
 
     try:
-        # Read the uploaded CSV file
         df = pd.read_csv(io.StringIO(file.read().decode('utf-8')))
         logger.info(f"CSV file uploaded: {file.filename}")
 
-        # Train the models and get evaluation results
-        model_results, plot_img = train_model(df)
-        
+        model_results = train_model(df)  # Returns structured data
 
-        # Return the model evaluation results and the plot image
         return jsonify({
-            'model_results': model_results,
-            'roc_auc_plot': plot_img
+            'model_results': model_results
         })
 
     except Exception as e:
         logger.error(f"Error during training process: {e}")
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/predict', methods=['POST'])
 def predict():

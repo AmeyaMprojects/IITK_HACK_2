@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from "recharts";
+
 
 const backendURL = "https://iitk-hack-2.onrender.com";
 
@@ -8,7 +10,7 @@ const App = () => {
   const [results, setResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [rocAucPlot, setRocAucPlot] = useState(null);
+  const [chartData, setChartData] = useState([]);
   const [formData, setFormData] = useState({
     default_profile: "",
     default_profile_image: "",
@@ -33,7 +35,7 @@ const App = () => {
     setLoading(true);
     setError(null);
     setResults(null);
-    setRocAucPlot(null);
+    setChartData([]);
   
     const formData = new FormData();
     formData.append("file", file);
@@ -41,23 +43,32 @@ const App = () => {
     try {
       const response = await axios.post(`${backendURL}/train`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
-        timeout: 180000,  // Increase timeout to 3 minutes
+        timeout: 180000,
       });
   
-      console.log("Response:", response);  
-      if (response.data) {
+      if (response.data.model_results) {
         setResults(response.data.model_results);
-        setRocAucPlot(response.data.roc_auc_plot);
+        
+        // Prepare data for Recharts
+        const formattedData = response.data.model_results.map((model) => ({
+          model: model.model,
+          precision: model.precision,
+          recall: model.recall,
+          f1: model.f1,
+          auc_roc: model.auc_roc,
+        }));
+  
+        setChartData(formattedData);
       } else {
         setError("No data received from the server.");
       }
     } catch (err) {
-      console.error("Error:", err);
       setError(err.response?.data?.error || "Unexpected error occurred.");
     } finally {
       setLoading(false);
     }
   };
+  
   
   
 
@@ -120,16 +131,24 @@ const App = () => {
       {/* Display error message if any */}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* Display ROC-AUC plot */}
-      {rocAucPlot && (
-        <div>
-          <h3>Model Comparison: Precision, Recall, F1, and AUC-ROC</h3>
-          <img
-            src={`data:image/png;base64,${rocAucPlot}`}
-            alt="Model Comparison Plot"
-          />
-        </div>
-      )}
+      {chartData.length > 0 && (
+  <div>
+    <h3>Model Comparison: Precision, Recall, F1, and AUC-ROC</h3>
+    <ResponsiveContainer width="100%" height={400}>
+      <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <XAxis dataKey="model" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="precision" fill="#1f77b4" name="Precision" />
+        <Bar dataKey="recall" fill="#ff7f0e" name="Recall" />
+        <Bar dataKey="f1" fill="#2ca02c" name="F1 Score" />
+        <Bar dataKey="auc_roc" fill="#d62728" name="AUC-ROC" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+)}
+
 
       {/* Display results after model is trained */}
       {results && (
