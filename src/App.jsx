@@ -27,7 +27,7 @@ const App = () => {
     setTweetData([]);
 
     try {
-      const response = await axios.post("http://127.0.0.1:5000/analyze", {
+      const response = await axios.post("https://iitk-hack-2.onrender.com/analyze", {
         twitter_handle: username,
       });
       setPrediction(response.data.prediction);
