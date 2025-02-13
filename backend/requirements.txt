@@ -7,3 +7,4 @@ xgboost
 matplotlib
 seaborn
 gunicorn
+tweepy
