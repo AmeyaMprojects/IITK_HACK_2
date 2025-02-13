@@ -13,8 +13,12 @@ from flask_cors import CORS
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+from flask import Flask
+from flask_cors import CORS
+
 app = Flask(__name__)
-CORS(app)  # Allow frontend to access backend
+CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins
+
 
 # Load the pretrained model
 MODEL_PATH = "best_model.pkl"

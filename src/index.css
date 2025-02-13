@@ -9,6 +9,17 @@
   --white: #ffffff;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+  --gradient-start: #5680E9;
+  --gradient-mid1: #84CEEB;
+  --gradient-mid2: #5AB9EA;
+  --gradient-mid3: #C1C8E4;
+  --gradient-end: #8860D0;
+  --white: #ffffff;
+}
+
 * {
   margin: 0;
   padding: 0;
