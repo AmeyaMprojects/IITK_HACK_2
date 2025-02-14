@@ -13,16 +13,11 @@ from flask_cors import CORS
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-from flask import Flask
-from flask_cors import CORS
-
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})  # Allow all origins
 
-
 # Load the pretrained model
 MODEL_PATH = "best_model.pkl"
-
 if os.path.exists(MODEL_PATH):
     with open(MODEL_PATH, 'rb') as f:
         model = pickle.load(f)
@@ -31,13 +26,10 @@ else:
     logger.error("Model file not found! Ensure it exists in the directory.")
     model = None
 
-# Twitter API credentials (replace with your own)
-BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAF%2FBzAEAAAAAN%2FXfx98dMbPckR9EpBWmllfQR8g%3DNMKVeabrfux7WSMpmQsGRoifMOr81zoiubGMTMVSkQbkI3tVzt"
+def get_twitter_client(bearer_token):
+    """Initialize Tweepy client dynamically with a provided API key."""
+    return tweepy.Client(bearer_token=bearer_token)
 
-# Initialize Tweepy client
-client = tweepy.Client(bearer_token=BEARER_TOKEN)
-
-# Predict bot or human and fetch tweet activity
 @app.route('/analyze', methods=['POST'])
 def analyze():
     try:
@@ -46,8 +38,15 @@ def analyze():
 
         data = request.json
         username = data.get("twitter_handle")
+        bearer_token = data.get("bearer_token")  # Get the API key from request
+
         if not username:
             return jsonify({'error': 'Twitter handle is required'}), 400
+        if not bearer_token:
+            return jsonify({'error': 'Bearer token is required'}), 400
+
+        # Initialize Tweepy client with the provided token
+        client = get_twitter_client(bearer_token)
 
         # Fetch user data from Twitter API
         user = client.get_user(username=username, user_fields=["public_metrics", "verified", "created_at"])
@@ -108,6 +107,9 @@ def analyze():
             'human_probability': human_prob,
             'tweet_activity': tweet_activity
         })
+    except tweepy.errors.TooManyRequests:
+        logger.error("Rate limit exceeded. Please try again later.")
+        return jsonify({'error': 'Twitter API rate limit exceeded. Please wait before trying again.'}), 429
     except Exception as e:
         logger.error(f"Error during analysis: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500

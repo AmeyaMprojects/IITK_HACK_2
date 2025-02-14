@@ -4,6 +4,13 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 const App = () => {
   const [username, setUsername] = useState("");
+  const [apiKeys, setApiKeys] = useState({
+    "Key 1": "AAAAAAAAAAAAAAAAAAAAA1",
+    "Key 2": "BBBBBBBBBBBBBBBBBBBBB2",
+    "Key 3": "CCCCCCCCCCCCCCCCCCCCC3"
+  });
+  const [apiKey, setApiKey] = useState("");
+  const [customKey, setCustomKey] = useState("");
   const [prediction, setPrediction] = useState(null);
   const [botProbability, setBotProbability] = useState(null);
   const [humanProbability, setHumanProbability] = useState(null);
@@ -11,8 +18,16 @@ const App = () => {
   const [error, setError] = useState(null);
   const [tweetData, setTweetData] = useState([]);
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
+  const handleUsernameChange = (e) => setUsername(e.target.value);
+  const handleApiKeyChange = (e) => setApiKey(e.target.value);
+  const handleCustomKeyChange = (e) => setCustomKey(e.target.value);
+  
+  const addCustomKey = () => {
+    if (customKey.trim()) {
+      setApiKeys(prevKeys => ({ ...prevKeys, ["Custom Key"]: customKey.trim() }));
+      setApiKey(customKey.trim());
+      setCustomKey("");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -29,6 +44,7 @@ const App = () => {
     try {
       const response = await axios.post("https://iitk-hack-2.onrender.com/analyze", {
         twitter_handle: username,
+        bearer_token: apiKey,
       });
       setPrediction(response.data.prediction);
       setBotProbability(response.data.bot_probability);
@@ -46,20 +62,25 @@ const App = () => {
       <h1>Twitter Bot Detector</h1>
       <form onSubmit={handleSubmit}>
         <label>Enter Twitter Username:</label>
-        <input
-          type="text"
-          value={username}
-          onChange={handleUsernameChange}
-          placeholder="e.g. jack"
-          required
-        />
+        <input type="text" value={username} onChange={handleUsernameChange} placeholder="e.g. jack" required />
+        
+        <label>Select API Key:</label>
+        <select value={apiKey} onChange={handleApiKeyChange}>
+          {Object.entries(apiKeys).map(([keyName, keyValue]) => (
+            <option key={keyValue} value={keyValue}>{keyName}</option>
+          ))}
+        </select>
+
+        <label>Add Custom API Key:</label>
+        <input type="text" value={customKey} onChange={handleCustomKeyChange} placeholder="Enter your API key" />
+        <button type="button" onClick={addCustomKey}>Add Key</button>
+
         <button type="submit" disabled={loading}>
           {loading ? "Analyzing..." : "Check Bot Status"}
         </button>
       </form>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
-
       {prediction !== null && (
         <div>
           <h2>Prediction Result</h2>
