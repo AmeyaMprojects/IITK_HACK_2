@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import TextScramble from '@skits/react-text-scramble';
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -53,7 +54,13 @@ const App = () => {
 
   return (
     <div className="container">
-      <h1>Twitter Bot Detector</h1>
+      <h1 className="title">
+        <TextScramble
+        text="Twitter Bot Detector"
+        revealDelay={0.5}
+        revealText="True"
+        />
+      </h1>
       <form onSubmit={handleSubmit}>
         <label>Enter Twitter Username:</label>
         <input type="text" value={username} onChange={handleUsernameChange} placeholder="e.g. jack" required />
