@@ -4,11 +4,6 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 const App = () => {
   const [username, setUsername] = useState("");
-  const [apiKeys, setApiKeys] = useState({
-    "Key 1": "AAAAAAAAAAAAAAAAAAAAA1",
-    "Key 2": "BBBBBBBBBBBBBBBBBBBBB2",
-    "Key 3": "CCCCCCCCCCCCCCCCCCCCC3"
-  });
   const [apiKey, setApiKey] = useState("");
   const [customKey, setCustomKey] = useState("");
   const [prediction, setPrediction] = useState(null);
@@ -24,7 +19,6 @@ const App = () => {
   
   const addCustomKey = () => {
     if (customKey.trim()) {
-      setApiKeys(prevKeys => ({ ...prevKeys, ["Custom Key"]: customKey.trim() }));
       setApiKey(customKey.trim());
       setCustomKey("");
     }
@@ -64,16 +58,8 @@ const App = () => {
         <label>Enter Twitter Username:</label>
         <input type="text" value={username} onChange={handleUsernameChange} placeholder="e.g. jack" required />
         
-        <label>Select API Key:</label>
-        <select value={apiKey} onChange={handleApiKeyChange}>
-          {Object.entries(apiKeys).map(([keyName, keyValue]) => (
-            <option key={keyValue} value={keyValue}>{keyName}</option>
-          ))}
-        </select>
-
-        <label>Add Custom API Key:</label>
-        <input type="text" value={customKey} onChange={handleCustomKeyChange} placeholder="Enter your API key" />
-        <button type="button" onClick={addCustomKey}>Add Key</button>
+        <label>Enter API Key:</label>
+        <input type="text" value={apiKey} onChange={handleApiKeyChange} placeholder="Enter your API key" />
 
         <button type="submit" disabled={loading}>
           {loading ? "Analyzing..." : "Check Bot Status"}
