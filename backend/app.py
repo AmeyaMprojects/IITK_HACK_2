@@ -101,12 +101,13 @@ def analyze():
             tweet_activity.append({"date": str(date), "count": tweet_counts[date]})
 
         return jsonify({
-            'twitter_handle': username,
-            'prediction': prediction,  # 0 = Bot, 1 = Human
-            'bot_probability': bot_prob,
-            'human_probability': human_prob,
-            'tweet_activity': tweet_activity
+    'twitter_handle': username,
+    'prediction': int(prediction),  # Convert NumPy int to Python int
+    'bot_probability': float(bot_prob),  # Convert NumPy float32 to Python float
+    'human_probability': float(human_prob),  # Convert NumPy float32 to Python float
+    'tweet_activity': [{"date": str(entry["date"]), "count": int(entry["count"])} for entry in tweet_activity]  # Ensure counts are Python ints
         })
+
     except tweepy.errors.TooManyRequests:
         logger.error("Rate limit exceeded. Please try again later.")
         return jsonify({'error': 'Twitter API rate limit exceeded. Please wait before trying again.'}), 429
