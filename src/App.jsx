@@ -1,7 +1,9 @@
+// filepath: /C:/Users/ameya/Desktop/projects/stack/IITK_HACK_2/src/App.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import TextScramble from '@skits/react-text-scramble';
+import './index.css';
 
 const App = () => {
   const [username, setUsername] = useState("");
@@ -53,37 +55,54 @@ const App = () => {
   };
 
   return (
-    <div className="container">
-      <h1 className="title">
+    <div className="container mx-auto p-8 bg-white bg-opacity-50 rounded-lg shadow-lg text-center">
+      <h1 className="font-bold text-6xl mb-8">
         <TextScramble
-        text="Twitter Bot Detector"
-        revealDelay={0.5}
-        revealText="True"
+          text="Twitter Bot Detector"
+          revealDelay={0.5}
+          revealText="True"
         />
       </h1>
-      <form onSubmit={handleSubmit}>
-        <label>Enter Twitter Username:</label>
-        <input type="text" value={username} onChange={handleUsernameChange} placeholder="e.g. jack" required />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <label className="block text-lg font-medium">Enter Twitter Username:</label>
+        <input
+          type="text"
+          value={username}
+          onChange={handleUsernameChange}
+          placeholder="e.g. jon doe"
+          required
+          className="w-full max-w-md mx-auto p-3 rounded bg-white bg-opacity-20 text-black text-center"
+        />
         
-        <label>Enter API Key:</label>
-        <input type="text" value={apiKey} onChange={handleApiKeyChange} placeholder="Enter your API key" />
+        <label className="block text-lg font-medium">Enter API Key:</label>
+        <input
+          type="text"
+          value={apiKey}
+          onChange={handleApiKeyChange}
+          placeholder="Enter your API key"
+          className="w-full max-w-md mx-auto p-3 rounded bg-white bg-opacity-20 text-black text-center"
+        />
 
-        <button type="submit" disabled={loading}>
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-full shadow-lg hover:bg-blue-600 transition duration-300"
+        >
           {loading ? "Analyzing..." : "Check Bot Status"}
         </button>
       </form>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="text-red-500 mt-4">{error}</p>}
       {prediction !== null && (
-        <div>
-          <h2>Prediction Result</h2>
-          <p>{botProbability > humanProbability ? `${botProbability}% Bot` : `${humanProbability}% Human`}</p>
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold">Prediction Result</h2>
+          <p className="text-xl">{botProbability > humanProbability ? `${botProbability}% Bot` : `${humanProbability}% Human`}</p>
         </div>
       )}
 
       {tweetData.length > 0 && (
-        <div>
-          <h2>Tweet Activity (Last 10 Days)</h2>
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold">Tweet Activity (Last 10 Days)</h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={tweetData}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.3)"/>

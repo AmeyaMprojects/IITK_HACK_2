@@ -1,22 +1,7 @@
+@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
 
 :root {
-  --gradient-start: #5680E9;
-  --gradient-mid1: #84CEEB;
-  --gradient-mid2: #5AB9EA;
-  --gradient-mid3: #C1C8E4;
-  --gradient-end: #8860D0;
-  --white: #ffffff;
-}
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
-
-:root {
-  --gradient-start: #5680E9;
-  --gradient-mid1: #84CEEB;
-  --gradient-mid2: #5AB9EA;
-  --gradient-mid3: #C1C8E4;
-  --gradient-end: #8860D0;
   --white: #ffffff;
 }
 
@@ -60,7 +45,9 @@ body {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
   text-align: center;
   animation: fadeIn 1s ease-in-out;
-  margin: 0 auto; /* Center horizontally */
+  margin: 4rem auto;
+  /* min-height: 100vh; */
+
 }
 
 /* Smooth Fade-in Animation */
@@ -80,7 +67,7 @@ button, .file-label, .back-button {
   cursor: pointer;
   transition: all 0.3s ease;
   color: #000; /* Black text for contrast */
-  box-shadow: 0 0 10px #00f0ff, 0 0 20px #00e1ff; /* Neon glow effect */
+  /* box-shadow: 0 0 10px #00f0ff, 0 0 20px #00e1ff; Neon glow effect */
   text-transform: uppercase;
   letter-spacing: 1px;
   outline: none;
@@ -89,7 +76,7 @@ button, .file-label, .back-button {
 
 button:hover, .file-label:hover, .back-button:hover {
   background: #00e1ff;
-  box-shadow: 0 0 15px #00e1ff, 0 0 25px #00f0ff;
+  box-shadow: 0 0 15px #00e1ff, 0 0 10px #00f0ff;
   transform: translateY(-2px);
 }
 
